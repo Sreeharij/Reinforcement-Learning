@@ -6,7 +6,8 @@ import os
 CURRENT_FILE_PATH = os.path.abspath(__file__)
 CURRENT_FOLDER = os.path.dirname(CURRENT_FILE_PATH)
 QTABLES_FOLDER = os.path.join(CURRENT_FOLDER,"qtables")
-DELETE_CURRENT_QTABLES = True
+DELETE_CURRENT_QTABLES = True #DELETES QTABLES IF FLAG IS SET TO TRUE
+SAVE_MODELS = True #SAVES MODELS IF THIS FLAG IS SET TO TRUE
 
 if not os.path.exists(QTABLES_FOLDER):
     os.mkdir(QTABLES_FOLDER)
@@ -18,12 +19,12 @@ env = gym.make("MountainCar-v0",render_mode = "rgb_array")
 
 LEARNING_RATE = 0.1
 DISCOUNT = 0.95
-EPISODES = 1000
-SHOW_EVERY = 500000
+EPISODES = 25000
+SHOW_EVERY = 5000
 
 epsilon = 0.5
 START_EPSILON_DECAYING = 1
-END_EPSILON_DECAYING = EPISODES//2
+END_EPSILON_DECAYING = EPISODES
 epsilon_decay_value = epsilon / (END_EPSILON_DECAYING - START_EPSILON_DECAYING)
 
 bucket_size = 40
@@ -82,7 +83,7 @@ for episode in range(1,EPISODES+1):
         aggr_ep_rewards['max'].append(max(ep_rewards[-STATS_EVERY:]))
         aggr_ep_rewards['min'].append(min(ep_rewards[-STATS_EVERY:]))
         # print(f"Episode: {episode}, average_reward: {average_reward}, min_reward: {min(ep_rewards[-STATS_EVERY:])}, max_reward: {max(ep_rewards[-STATS_EVERY:])}, current_epsilon = {epsilon:1.2f}")
-    if episode%10 == 0:
+    if episode%10 == 0 and SAVE_MODELS: 
         new_file_name = os.path.join(QTABLES_FOLDER,f"{episode}-qtable.npy")
         np.save(new_file_name,q_table)
     env.close()
